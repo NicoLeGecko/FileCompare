@@ -19,6 +19,7 @@ switch (command)
         Search(directory);
         break;
     default:
+        break;
         // Inform user of unknown command
 }
 

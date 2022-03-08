@@ -12,7 +12,7 @@ namespace FileCompare.Test
         {
             var fileSystemMock = new MockFileSystem();
             
-            var fileComparer = new FileComparer(fileSystemMock, );
+            var fileComparer = new FileComparer(fileSystemMock, "");
 
             Assert.AreEqual(true, true, "The files are not equal.");
         }
