@@ -46,30 +46,11 @@ namespace FileCompare
         /// <param name="directory"></param>
         public IEnumerable<string> AddToDb(string directory)
         {
-
-            var directoryInfo = _fileSystem.DirectoryInfo.FromDirectoryName(directory);
-            var fileInfos = directoryInfo.EnumerateFiles("*", System.IO.SearchOption.AllDirectories);
-
-            var fileEntries = fileInfos
-                .AsParallel()
-                .Select(i =>
-                {
-                    using (SHA1 sha = SHA1.Create())
-                    using (FileStream fs = new(i.FullName, FileMode.Open, FileAccess.Read))
-                    {
-                        var hash = sha.ComputeHash(fs);
-
-                        return new FileEntry()
-                        {
-                            ContentHash = Encoding.Default.GetString(hash),
-                            FullPath = i.FullName
-                        };
-                    };
-                });
+            var fileEntries = ScanDirectory(directory);
 
             var entriesToAdd = fileEntries
                 .OrderBy(i => i.FullPath.Length)
-                .DistinctBy(e => e.ContentHash);
+                .DistinctBy(e => e.HashAsText);
 
             _context.FileEntries.AddRange(entriesToAdd);
             _context.SaveChanges();
@@ -90,7 +71,50 @@ namespace FileCompare
         /// <returns>A dictionary with the files in the scanned directory togethee with the found duplicates in the db</returns>
         public Dictionary<string, IEnumerable<string>> SearchForDuplicates(string directory)
         {
-            throw new NotImplementedException();
+            var dict = new Dictionary<string, IEnumerable<string>>();
+            
+            var newEntries = ScanDirectory(directory).ToList();
+
+            var knownEntries = _context.FileEntries
+                .Where(e => newEntries.Select(n => n.HashAsBytes).Contains(e.HashAsBytes)).ToList();
+
+            foreach (var knownEntry in knownEntries)
+            {
+                IEnumerable<string> added = newEntries.
+                        Where(e => e.HashAsBytes.SequenceEqual(knownEntry.HashAsBytes))
+                        .Select(e => e.FullPath).ToList();
+
+                dict.Add(knownEntry.FullPath, added);
+            }
+
+            return dict;
         }
+
+
+        private IEnumerable<FileEntry> ScanDirectory(string directory)
+        {
+            var directoryInfo = _fileSystem.DirectoryInfo.FromDirectoryName(directory);
+            var fileInfos = directoryInfo.EnumerateFiles("*", System.IO.SearchOption.AllDirectories);
+
+            var fileEntries = fileInfos
+                .AsParallel()
+                .Select(i =>
+                {
+                    using (SHA1 sha = SHA1.Create())
+                    using (FileStream fs = new(i.FullName, FileMode.Open, FileAccess.Read))
+                    {
+                        var hash = sha.ComputeHash(fs);
+
+                        return new FileEntry()
+                        {
+                            HashAsBytes = hash,
+                            FullPath = i.FullName
+                        };
+                    };
+                });
+
+            return fileEntries.AsEnumerable();
+        }
+
     }
 }

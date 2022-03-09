@@ -16,7 +16,6 @@ namespace FileCompare.Test
         public string TestDir1 => TestRootDirectory + "\\TestDir1";
         public string TestDir2 => TestRootDirectory + "\\TestDir2";
         
-        public string TestDbPath => TestRootDirectory + "\\TestDb.db";
 
         public IEnumerable<string> FilesDir1 { get; }
             = new[]
@@ -67,18 +66,14 @@ namespace FileCompare.Test
                 @"TestDir2\protest.jpg"
             };
 
-
-        [SetUp]
-        public void Setup()
-        {
-            var fileSystem = new FileSystem();
-            fileSystem.File.Delete(TestDbPath);
-        }
-
         [Test]
         public void TestAddToDb()
         {
-            var fileComparer = new FileComparer(TestDbPath);
+            string testDbPath = TestRootDirectory + "\\TestAddToDb.db";
+            var fileSystem = new FileSystem();
+            fileSystem.File.Delete(testDbPath);
+
+            var fileComparer = new FileComparer(testDbPath);
             var filesAdded = fileComparer.AddToDb(TestDir1);
 
             var result = filesAdded.Select(path => Path.GetRelativePath(TestRootDirectory, path));
@@ -86,6 +81,27 @@ namespace FileCompare.Test
             CollectionAssert.AreEquivalent(ExpectedAddedDir1, result);
             CollectionAssert.IsNotSubsetOf(ExpectedDiscardedDir1, result);
         }
+
+        [Test]
+        public void TestSearchForDuplicates()
+        {
+            string testDbPath = TestRootDirectory + "\\TestSearchForDuplicates.db";
+            var fileSystem = new FileSystem();
+            fileSystem.File.Delete(testDbPath);
+
+            var fileComparer = new FileComparer(testDbPath);
+            var filesAdded = fileComparer.AddToDb(TestDir1);
+
+            var duplicatesDictionary = fileComparer.SearchForDuplicates(TestDir2);
+
+            var result = duplicatesDictionary.Values
+                .SelectMany(paths => paths)
+                .Select(path => Path.GetRelativePath(TestRootDirectory, path)).ToList();
+
+            CollectionAssert.AreEquivalent(ExpectedDuplicatesDir2, result);
+            CollectionAssert.IsNotSubsetOf(UniqueFilesDir2, result);
+        }
+
 
         // Wanted to try on actual files directly
 
