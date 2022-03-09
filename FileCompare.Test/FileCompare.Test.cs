@@ -16,7 +16,7 @@ namespace FileCompare.Test
         public string TestDir1 => TestRootDirectory + "\\TestDir1";
         public string TestDir2 => TestRootDirectory + "\\TestDir2";
         
-        public string TestDbPath => "TestDb.db";
+        public string TestDbPath => TestRootDirectory + "\\TestDb.db";
 
         public IEnumerable<string> FilesDir1 { get; }
             = new[]
@@ -39,6 +39,7 @@ namespace FileCompare.Test
                 @"TestDir1\lake.jpg",
                 @"TestDir1\mountain.jpg",
                 @"TestDir1\park.jpg",
+                @"TestDir1\SubDir1\plaque.jpg",
                 @"TestDir1\SubDir1\SubDir2\moon.jpg",
             };
 
@@ -75,36 +76,18 @@ namespace FileCompare.Test
         }
 
         [Test]
-        /// <summary>
-        /// Sanity test
-        /// </summary>
-        public void ListFilesInDirectory()
+        public void TestAddToDb()
         {
-            var fileSystem = new FileSystem();
+            var fileComparer = new FileComparer(TestDbPath);
+            var filesAdded = fileComparer.AddToDb(TestDir1);
 
-            var testDirectoryInfo = fileSystem.DirectoryInfo.FromDirectoryName(TestRootDirectory);
+            var result = filesAdded.Select(path => Path.GetRelativePath(TestRootDirectory, path));
 
-            var fileInfos = testDirectoryInfo.EnumerateFiles("*", System.IO.SearchOption.AllDirectories);
-
-            Console.WriteLine($"Found {fileInfos.Count()} files in " + testDirectoryInfo.Name);
-
-            foreach (var fileInfo in fileInfos)
-            {
-                Console.WriteLine(fileInfo.FullName);
-            }
-
-            int expected = 14;
-
-            Assert.AreEqual(expected, fileInfos.Count());
+            CollectionAssert.AreEquivalent(ExpectedAddedDir1, result);
+            CollectionAssert.IsNotSubsetOf(ExpectedDiscardedDir1, result);
         }
 
-        [Test]
-        public void TestAdd()
-        {
-            new FileComparer(TestDbPath).AddToDb(TestDir1);
-        }
-
-        // Want to try on actual files directly
+        // Wanted to try on actual files directly
 
         //[Test]
         //public void Test1()

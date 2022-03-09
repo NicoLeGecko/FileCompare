@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace FileCompare
 {
@@ -41,15 +44,34 @@ namespace FileCompare
         /// Finds files in the directory and add to the db so that they are later returned by a search.
         /// </summary>
         /// <param name="directory"></param>
-        public void AddToDb(string directory)
+        public IEnumerable<string> AddToDb(string directory)
         {
-            var newEntry = new FileEntry()
-            {
-                ContentHash = Guid.NewGuid().ToString(),
-                FullPath = directory + $"\\testfile-{DateTime.Now.ToLongTimeString()}.mp4"
-            };
 
-            _context.FileEntries.Add(newEntry);
+            var directoryInfo = _fileSystem.DirectoryInfo.FromDirectoryName(directory);
+            var fileInfos = directoryInfo.EnumerateFiles("*", System.IO.SearchOption.AllDirectories);
+
+            var fileEntries = fileInfos
+                .AsParallel()
+                .Select(i =>
+                {
+                    using (SHA1 sha = SHA1.Create())
+                    using (FileStream fs = new(i.FullName, FileMode.Open, FileAccess.Read))
+                    {
+                        var hash = sha.ComputeHash(fs);
+
+                        return new FileEntry()
+                        {
+                            ContentHash = Encoding.Default.GetString(hash),
+                            FullPath = i.FullName
+                        };
+                    };
+                });
+
+            var entriesToAdd = fileEntries
+                .OrderBy(i => i.FullPath.Length)
+                .DistinctBy(e => e.ContentHash);
+
+            _context.FileEntries.AddRange(entriesToAdd);
             _context.SaveChanges();
 
             Console.WriteLine("Entries in db;");
@@ -57,6 +79,8 @@ namespace FileCompare
             {
                 Console.WriteLine(entry.FullPath);
             }
+
+            return entriesToAdd.Select(e => e.FullPath);
         }
 
         /// <summary>
