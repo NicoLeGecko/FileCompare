@@ -24,7 +24,7 @@ A tool capable of identifying duplicate binary files in a directory.
 
 Reads all binary files in a directory (recursively).
 Produces a hash of each file's contents (without system metadata).
-Stores this hash together with the file name (full path).
+Stores this hash together with the file name (relative path).
 Storage is done in a simple text file (FileCompare.csv), in the directory.
 
 ## Search for duplicates (SearchForDuplicates)
