@@ -6,7 +6,8 @@ namespace FileCompare
 {
     public class FileComparer
     {
-        private IFileSystem fileSystem;
+        private readonly IFileSystem _fileSystem;
+        private readonly FileCompareContext _context;
 
         /// <summary>
         /// Number of files in db
@@ -29,7 +30,9 @@ namespace FileCompare
         /// <param name="dbPath"></param>
         internal FileComparer(IFileSystem fileSystem, string dbPath)
         {
-            this.fileSystem = fileSystem;
+            _fileSystem = fileSystem;
+
+            _context = new FileCompareContext(dbPath);
         }
 
         /// <summary>

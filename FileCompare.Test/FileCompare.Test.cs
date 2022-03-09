@@ -12,7 +12,11 @@ namespace FileCompare.Test
     [TestFixture]
     public class FileCompare_Test
     {
-        public string TestDirectory => "TestDirectory";
+        public string TestRootDirectory => "TestDirectory";
+        public string TestDir1 => TestRootDirectory + "\\TestDir1";
+        public string TestDir2 => TestRootDirectory + "\\TestDir2";
+        
+        public string TestDbPath => "TestDb";
 
         public IEnumerable<string> FilesDir1 { get; }
             = new[]
@@ -70,7 +74,7 @@ namespace FileCompare.Test
         {
             var fileSystem = new FileSystem();
 
-            var testDirectoryInfo = fileSystem.DirectoryInfo.FromDirectoryName(TestDirectory);
+            var testDirectoryInfo = fileSystem.DirectoryInfo.FromDirectoryName(TestRootDirectory);
 
             var fileInfos = testDirectoryInfo.EnumerateFiles("*", System.IO.SearchOption.AllDirectories);
 
@@ -86,7 +90,11 @@ namespace FileCompare.Test
             Assert.AreEqual(expected, fileInfos.Count());
         }
 
-
+        [Test]
+        public void TestAdd()
+        {
+            new FileComparer(TestDbPath).AddToDb(TestDir1);
+        }
 
         // Want to try on actual files directly
 
