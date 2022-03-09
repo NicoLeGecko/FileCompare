@@ -29,5 +29,10 @@ namespace FileCompare
         public int FileEntryId { get; set; }
         public string ContentHash { get; set; }
         public string FullPath { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id:{FileEntryId} - Hash:{ContentHash} - Path: {FullPath}";
+        }
     }
 }

@@ -30,7 +30,9 @@ Loads or creates a db (sqlite) at a given path.
 Reads all binary files in a directory (recursively).
 Produces a hash of each file's contents (without system metadata).
 Stores this hash together with the file name (full path) in the db.
-Avoids storing duplicates.
+Avoids storing duplicates (chooses the file with shortest full path).
+
+The hashing algorithm is SHA1 as I've understood it's the fastest. Neglecting the risk of hash collisions.
 
 ## Search for duplicates (SearchForDuplicates)
 
@@ -55,6 +57,13 @@ Some binary files have embedded application metadata, and may be counted as dist
 - Options such as --verbose,
 - Save outputs to a file.
 
+## Scan a directory (AddToDB)
+
+- Search hidden files
+- Ignore text files
+- Use streams to read rather than loading everything in memory
+- Read and Hash asynchronously to parralellize work, rather than performing it in sequence
+
 ## Search for duplicates (SearchForDuplicates)
 
 - Support a spectrum of file similarity, e.g. hard duplicates vs soft duplicates ('similar' files), by analyzing metadata and actual file contents.
@@ -62,3 +71,4 @@ Some binary files have embedded application metadata, and may be counted as dist
 ## Code
 
 - Decouple using interfaces and dependency injection, for maintainability and unit-testability
+
