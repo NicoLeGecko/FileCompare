@@ -2,6 +2,10 @@ using NUnit.Framework;
 using FileCompare;
 using System.IO.Abstractions.TestingHelpers;
 using System.Collections.Generic;
+using System.IO.Abstractions;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace FileCompare.Test
 {
@@ -45,13 +49,41 @@ namespace FileCompare.Test
            };
 
         [Test]
-        public void Test1()
+        /// <summary>
+        /// Sanity test
+        /// </summary>
+        public void ListFilesInDirectory()
         {
-            var fileSystemMock = new MockFileSystem();
-            
-            var fileComparer = new FileComparer(fileSystemMock, "");
+            var fileSystem = new FileSystem();
 
-            Assert.AreEqual(true, true, "The files are not equal.");
+            var testDirectoryInfo = fileSystem.DirectoryInfo.FromDirectoryName(TestDirectory);
+
+            var fileInfos = testDirectoryInfo.EnumerateFiles("*", System.IO.SearchOption.AllDirectories);
+
+            Console.WriteLine($"Found {fileInfos.Count()} files in " + testDirectoryInfo.Name);
+
+            foreach (var fileInfo in fileInfos)
+            {
+                Console.WriteLine(fileInfo.FullName);
+            }
+
+            int expected = RelativePathsToUniqueTestFiles.Count() + RelativePathsToDuplicatedTestFiles.Count();
+
+            Assert.AreEqual(expected, fileInfos.Count());
         }
+
+
+
+        // Want to try on actual files directly
+
+        //[Test]
+        //public void Test1()
+        //{
+        //    var fileSystemMock = new MockFileSystem();
+
+        //    var fileComparer = new FileComparer(fileSystemMock, "");
+
+        //    Assert.AreEqual(true, true, "The files are not equal.");
+        //}
     }
 }
