@@ -36,7 +36,7 @@ The hashing algorithm is SHA1 as I've understood it's the fastest. Neglecting th
 
 ## Search for duplicates (SearchForDuplicates)
 
-Looks in the db for duplicate values of each hash.
+Reads from a new directory, and looks in the db for duplicate values of each hash.
 Outputs the names of the files that are duplicates of each other (shown as a group).
 
 A 'duplicate' here is a file whose contents (without system metadata) are exactly the same as another file.

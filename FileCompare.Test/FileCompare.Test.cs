@@ -87,6 +87,24 @@ namespace FileCompare.Test
             CollectionAssert.IsNotSubsetOf(ExpectedDiscardedDir1, result);
         }
 
+        [Test]
+        public void TestSearchForDuplicates()
+        {
+            var fileComparer = new FileComparer(TestDbPath);
+            var filesAdded = fileComparer.AddToDb(TestDir1);
+
+            var duplicatesDictionary = fileComparer.SearchForDuplicates(TestDir2);
+
+            var result = duplicatesDictionary.Values
+                .SelectMany(paths => paths)
+                .Select(path => Path.GetRelativePath(TestRootDirectory, path));
+
+            CollectionAssert.AreEquivalent(ExpectedDuplicatesDir2, result);
+            CollectionAssert.IsNotSubsetOf(UniqueFilesDir2, result);
+        }
+
+
+
         // Wanted to try on actual files directly
 
         //[Test]
