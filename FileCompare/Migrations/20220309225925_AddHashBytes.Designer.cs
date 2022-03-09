@@ -3,6 +3,7 @@ using System;
 using FileCompare;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FileCompare.Migrations
 {
     [DbContext(typeof(FileCompareContext))]
-    partial class FileCompareContextModelSnapshot : ModelSnapshot
+    [Migration("20220309225925_AddHashBytes")]
+    partial class AddHashBytes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.3");
@@ -23,10 +25,13 @@ namespace FileCompare.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ContentHash")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("FullPath")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("HashAsBytes")
+                    b.Property<byte[]>("HashBytes")
                         .HasColumnType("BLOB");
 
                     b.HasKey("FileEntryId");
