@@ -14,39 +14,53 @@ namespace FileCompare.Test
     {
         public string TestDirectory => "TestDirectory";
 
-        public IEnumerable<string> RelativePathsToDuplicatedTestFiles { get; }
-            = new List<string>
+        public IEnumerable<string> FilesDir1 { get; }
+            = new[]
             {
-                @"berlin.mp4",
-                @"berlin - Copy.mp4",
-                @"SubDir1\berlin.mp4",
-                @"SubDir1\SubDir2\berlin_copycopy.mp4",
-                //
-                @"lake.jpg",
-                @"lake - Copy.jpg",
-                @"SubDir1\lake.jpg",
-                @"SubDir1\lake - Copy.jpg",
-                //
-                @"mountain.jpg",
-                @"mountain - Copy.jpg",
-                @"SubDir1\mountain.jpg",
-                @"SubDir1\mountain - Copy.jpg",
-                @"SubDir1\SubDir2\mountain_copycopy.jpg",
-                //
-                @"park.jpg",
-                @"park - Copy.jpg",
-                @"SubDir1\park.jpg",
-                @"SubDir1\park - Copy.jpg",
-                @"SubDir1\SubDir2\park.jpg"
+                @"TestDir1\berlin - Copy.mp4",
+                @"TestDir1\berlin.mp4",
+                @"TestDir1\lake.jpg",
+                @"TestDir1\mountain.jpg",
+                @"TestDir1\park.jpg",
+                @"TestDir1\SubDir1\lake.jpg",
+                @"TestDir1\SubDir1\plaque.jpg",
+                @"TestDir1\SubDir1\SubDir2\moon.jpg",
+                @"TestDir1\SubDir1\SubDir2\mountain-differentName.jpg"
             };
 
-        public IEnumerable<string> RelativePathsToUniqueTestFiles { get; }
-           = new List<string>
-           { 
-               @"protest.jpg",
-               @"SubDir1\plaque.jpg",
-               @"SubDir1\SubDir2\moon.jpg"
-           };
+        public IEnumerable<string> ExpectedAddedDir1 { get; }
+            = new[]
+            {
+                @"TestDir1\berlin.mp4",
+                @"TestDir1\lake.jpg",
+                @"TestDir1\mountain.jpg",
+                @"TestDir1\park.jpg",
+                @"TestDir1\SubDir1\SubDir2\moon.jpg",
+            };
+
+        public IEnumerable<string> ExpectedDiscardedDir1 { get; }
+            = new[]
+            {
+                @"TestDir1\berlin - Copy.mp4",
+                @"TestDir1\SubDir1\lake.jpg",
+                @"TestDir1\SubDir1\plaque.jpg",
+                @"TestDir1\SubDir1\SubDir2\mountain-differentName.jpg"
+            };
+
+        public IEnumerable<string> ExpectedDuplicatesDir2 { get; }
+            = new[]
+            {
+                @"TestDir2\SubDir1\mountain.jpg",
+                @"TestDir2\SubDir1\park.jpg",
+                @"TestDir2\SubDir1\SubDir2\berlin.mp4",
+                @"TestDir2\SubDir1\SubDir2\lake.jpg"
+            };
+
+        public IEnumerable<string> UniqueFilesDir2 { get; }
+            = new[]
+            {
+                @"TestDir2\protest.jpg"
+            };
 
         [Test]
         /// <summary>
@@ -67,7 +81,7 @@ namespace FileCompare.Test
                 Console.WriteLine(fileInfo.FullName);
             }
 
-            int expected = RelativePathsToUniqueTestFiles.Count() + RelativePathsToDuplicatedTestFiles.Count();
+            int expected = 14;
 
             Assert.AreEqual(expected, fileInfos.Count());
         }

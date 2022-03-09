@@ -15,17 +15,22 @@ Priorities during development:
 
 # Main goal
 
-A tool capable of identifying duplicate binary files in a directory.
+A tool capable of identifying binary files in a directory that are duplicates of files previously known.
+E.g. scan dir1, add files to the db. Then scan dir 2 and search look for duplicates of files from dir1.
 
 
 # Features (v0)
+
+## Initialization
+
+Loads or creates a db (a simple text file, e.g. FileCompare.csv) at a given path.
 
 ## Scan a directory (AddToDB)
 
 Reads all binary files in a directory (recursively).
 Produces a hash of each file's contents (without system metadata).
-Stores this hash together with the file name (relative path).
-Storage is done in a simple text file (FileCompare.csv), in the directory.
+Stores this hash together with the file name (full path) in the db.
+Avoids storing duplicates.
 
 ## Search for duplicates (SearchForDuplicates)
 
@@ -49,11 +54,6 @@ Some binary files have embedded application metadata, and may be counted as dist
 
 - Options such as --verbose,
 - Save outputs to a file.
-
-## Scan a directory (AddToDB)
-
-- Support cross-directory search. E.g. scan and search dir1, then scan dir 2 and search across dir1 and dir2.
-- Support/prevent/warn of changes haveing been made to the directory between the scan and the search.
 
 ## Search for duplicates (SearchForDuplicates)
 
