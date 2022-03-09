@@ -276,3 +276,4 @@ __pycache__/
 # !tools/packages.config
 # ===== End VisualStudio.gitignore =====
 
+/FileCompare/fileCompare.db
