@@ -23,7 +23,7 @@ E.g. scan dir1, add files to the db. Then scan dir 2 and search look for duplica
 
 ## Initialization
 
-Loads or creates a db (a simple text file, e.g. FileCompare.csv) at a given path.
+Loads or creates a db (sqlite) at a given path.
 
 ## Scan a directory (AddToDB)
 

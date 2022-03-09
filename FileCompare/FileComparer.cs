@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Linq;
 
 namespace FileCompare
 {
     public class FileComparer
     {
-        private IFileSystem fileSystem;
+        private readonly IFileSystem _fileSystem;
+        private readonly FileCompareContext _context;
 
         /// <summary>
         /// Number of files in db
@@ -29,7 +31,10 @@ namespace FileCompare
         /// <param name="dbPath"></param>
         internal FileComparer(IFileSystem fileSystem, string dbPath)
         {
-            this.fileSystem = fileSystem;
+            _fileSystem = fileSystem;
+
+            _context = new FileCompareContext(dbPath);
+            _context.Database.EnsureCreated();
         }
 
         /// <summary>
@@ -38,7 +43,20 @@ namespace FileCompare
         /// <param name="directory"></param>
         public void AddToDb(string directory)
         {
-            throw new NotImplementedException();
+            var newEntry = new FileEntry()
+            {
+                ContentHash = Guid.NewGuid().ToString(),
+                FullPath = directory + $"\\testfile-{DateTime.Now.ToLongTimeString()}.mp4"
+            };
+
+            _context.FileEntries.Add(newEntry);
+            _context.SaveChanges();
+
+            Console.WriteLine("Entries in db;");
+            foreach (var entry in _context.FileEntries)
+            {
+                Console.WriteLine(entry.FullPath);
+            }
         }
 
         /// <summary>
