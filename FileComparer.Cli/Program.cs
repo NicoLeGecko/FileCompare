@@ -8,6 +8,8 @@ var command = args[0];
 var directory = args[1];
 var dbPath = args[2];
 
+
+
 var comparer = new FileComparer(dbPath);
 
 switch (command)

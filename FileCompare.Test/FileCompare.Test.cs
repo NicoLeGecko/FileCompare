@@ -16,7 +16,7 @@ namespace FileCompare.Test
         public string TestDir1 => TestRootDirectory + "\\TestDir1";
         public string TestDir2 => TestRootDirectory + "\\TestDir2";
         
-        public string TestDbPath => "TestDb";
+        public string TestDbPath => "TestDb.db";
 
         public IEnumerable<string> FilesDir1 { get; }
             = new[]
@@ -65,6 +65,14 @@ namespace FileCompare.Test
             {
                 @"TestDir2\protest.jpg"
             };
+
+
+        [SetUp]
+        public void Setup()
+        {
+            var fileSystem = new FileSystem();
+            fileSystem.File.Delete(TestDbPath);
+        }
 
         [Test]
         /// <summary>
