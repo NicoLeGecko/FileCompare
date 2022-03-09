@@ -99,9 +99,12 @@ namespace FileCompare.Test
         }
 
         [Test]
-        public void TestAdd()
+        public void TestAddToDb()
         {
-            new FileComparer(TestDbPath).AddToDb(TestDir1);
+            var fileComparer = new FileComparer(TestDbPath);
+            var filesAdded = fileComparer.AddToDb(TestDir1);
+
+            Assert.Contains(ExpectedAddedDir1, filesAdded.ToList());
         }
 
         // Want to try on actual files directly

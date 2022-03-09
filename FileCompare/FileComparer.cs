@@ -41,7 +41,7 @@ namespace FileCompare
         /// Finds files in the directory and add to the db so that they are later returned by a search.
         /// </summary>
         /// <param name="directory"></param>
-        public void AddToDb(string directory)
+        public IEnumerable<string> AddToDb(string directory)
         {
             var newEntry = new FileEntry()
             {
@@ -57,6 +57,8 @@ namespace FileCompare
             {
                 Console.WriteLine(entry.FullPath);
             }
+
+            return new[] { newEntry.FullPath };
         }
 
         /// <summary>

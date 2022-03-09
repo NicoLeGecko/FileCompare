@@ -58,3 +58,7 @@ Some binary files have embedded application metadata, and may be counted as dist
 ## Search for duplicates (SearchForDuplicates)
 
 - Support a spectrum of file similarity, e.g. hard duplicates vs soft duplicates ('similar' files), by analyzing metadata and actual file contents.
+
+## Code
+
+- Decouple using interfaces and dependency injection, for maintainability and unit-testability
