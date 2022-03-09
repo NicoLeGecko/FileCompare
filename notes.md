@@ -61,11 +61,10 @@ Some binary files have embedded application metadata, and may be counted as dist
 
 - Search hidden files
 - Ignore text files
-- Use streams to read rather than loading everything in memory
-- Read and Hash asynchronously to parralellize work, rather than performing it in sequence
 
 ## Search for duplicates (SearchForDuplicates)
 
+- After search is done, suggest to add the non-duplicate files to the db,
 - Support a spectrum of file similarity, e.g. hard duplicates vs soft duplicates ('similar' files), by analyzing metadata and actual file contents.
 
 ## Code
