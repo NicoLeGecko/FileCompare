@@ -48,20 +48,34 @@ namespace FileCompare
         {
             var fileEntries = ScanDirectory(directory);
 
-            var entriesToAdd = fileEntries
+            var distinctEntries = fileEntries
                 .OrderBy(i => i.FullPath.Length)
                 .DistinctBy(e => e.HashAsText);
 
-            _context.FileEntries.AddRange(entriesToAdd);
-            _context.SaveChanges();
+            var existingHashes = _context.FileEntries
+                .Select(e => e.HashAsText)
+                .ToList();
 
-            Console.WriteLine("Entries in db;");
-            foreach (var entry in _context.FileEntries)
+            var entriesToAdd = distinctEntries.ExceptBy(existingHashes, e => e.HashAsText);
+
+            Console.WriteLine();
+            if (entriesToAdd.Any())
             {
-                Console.WriteLine(entry.FullPath);
+                _context.FileEntries.AddRange(entriesToAdd);
+                _context.SaveChanges();
+
+                Console.WriteLine($"Adding {entriesToAdd.Count()} new files to the db:");
+                foreach (var entry in entriesToAdd)
+                {
+                    Console.WriteLine($"\t{entry.FullPath}");
+                } 
+            }
+            else
+            {
+                Console.WriteLine("No new files to add to the db.");
             }
 
-            return entriesToAdd.Select(e => e.FullPath);
+            return distinctEntries.Select(e => e.FullPath);
         }
 
         /// <summary>
@@ -73,16 +87,16 @@ namespace FileCompare
         {
             var dict = new Dictionary<string, IEnumerable<string>>();
             
-            var newEntries = ScanDirectory(directory).ToList();
+            var newEntries = ScanDirectory(directory);
 
             var knownEntries = _context.FileEntries
-                .Where(e => newEntries.Select(n => n.HashAsBytes).Contains(e.HashAsBytes)).ToList();
+                .Where(e => newEntries.Select(n => n.HashAsBytes).Contains(e.HashAsBytes));
 
             foreach (var knownEntry in knownEntries)
             {
                 IEnumerable<string> added = newEntries.
                         Where(e => e.HashAsBytes.SequenceEqual(knownEntry.HashAsBytes))
-                        .Select(e => e.FullPath).ToList();
+                        .Select(e => e.FullPath);
 
                 dict.Add(knownEntry.FullPath, added);
             }

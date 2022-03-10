@@ -70,5 +70,6 @@ Some binary files have embedded application metadata, and may be counted as dist
 ## Code
 
 - Decouple using interfaces and dependency injection, for maintainability and unit-testability
-- write overrides for equality comparers of FileEntry
+- Write overrides for equality comparers of FileEntry
 - Use the hash as primary key directly
+- Optimize the comparison of hashes and collections

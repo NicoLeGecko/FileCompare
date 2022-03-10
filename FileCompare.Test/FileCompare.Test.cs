@@ -57,7 +57,8 @@ namespace FileCompare.Test
                 @"TestDir2\SubDir1\mountain.jpg",
                 @"TestDir2\SubDir1\park.jpg",
                 @"TestDir2\SubDir1\SubDir2\berlin.mp4",
-                @"TestDir2\SubDir1\SubDir2\lake.jpg"
+                @"TestDir2\SubDir1\SubDir2\lake.jpg",
+                @"TestDir2\SubDir1\SubDir2\lake - Copy.jpg"
             };
 
         public IEnumerable<string> UniqueFilesDir2 { get; }
@@ -96,7 +97,7 @@ namespace FileCompare.Test
 
             var result = duplicatesDictionary.Values
                 .SelectMany(paths => paths)
-                .Select(path => Path.GetRelativePath(TestRootDirectory, path)).ToList();
+                .Select(path => Path.GetRelativePath(TestRootDirectory, path));
 
             CollectionAssert.AreEquivalent(ExpectedDuplicatesDir2, result);
             CollectionAssert.IsNotSubsetOf(UniqueFilesDir2, result);

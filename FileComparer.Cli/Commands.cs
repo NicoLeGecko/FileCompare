@@ -31,7 +31,8 @@ namespace FileCompare.Cli
 
             comparer.AddToDb(Directory);
 
-            Console.WriteLine("Files successfully added to the db.");
+            Console.WriteLine("");
+            Console.WriteLine("Scan successful.");
         }
     }
 
@@ -57,8 +58,10 @@ namespace FileCompare.Cli
 
             if (!duplicatesReport.Any())
             {
+                Console.WriteLine();
                 Console.WriteLine("Found no duplicate of any known file previously added to the db.");
-            }
+                return;
+            } 
 
             foreach (var report in duplicatesReport)
             {

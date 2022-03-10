@@ -120,6 +120,9 @@
     <None Update="TestDirectory\TestDir2\SubDir1\SubDir2\berlin.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestDirectory\TestDir2\SubDir1\SubDir2\lake - Copy.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestDirectory\TestDir2\SubDir1\SubDir2\lake.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
